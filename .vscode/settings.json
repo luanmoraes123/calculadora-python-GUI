@@ -4,7 +4,7 @@
   "editor.hover.enabled": true,
   "workbench.startupEditor": "none",
   "explorer.compactFolders": false,
-  "terminal.integrated.fontSize": 24,
+  "terminal.integrated.fontSize": 16,
   "editor.rulers": [80, 120],
   "workbench.iconTheme": "material-icon-theme",
   "code-runner.executorMap": {
@@ -48,5 +48,6 @@
   },
   // "python.defaultInterpreterPath": "./venv/bin/python",
   "python.analysis.typeCheckingMode": "basic",
-  "cSpell.enabled": true
+  "cSpell.enabled": true,
+  "python.analysis.autoImportCompletions": true
 }
