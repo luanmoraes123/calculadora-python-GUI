@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QApplication
-from buttons import ButtonsGrid, Button
+from buttons import ButtonsGrid
 from main_window import MainWindow
 from PySide6.QtGui import QIcon
 from variables import WINDOW_ICON_DIR
@@ -24,10 +24,6 @@ if __name__ == '__main__':
 
     buttonsGrid = ButtonsGrid()
     window.vLayout.addLayout(buttonsGrid)
-
-    buttonsGrid.addWidget(Button('0'), 0, 0)
-    buttonsGrid.addWidget(Button('1'), 0, 1)
-    buttonsGrid.addWidget(Button('2'), 0, 2)
 
     window.adjustFixedSize()
     window.show()
