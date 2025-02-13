@@ -29,4 +29,11 @@ class ButtonsGrid(QGridLayout):
     def _makeGrid(self):
         for i, row in enumerate(self._gridMask):
             for j, buttonText in enumerate(row):
-                self.addWidget(Button(buttonText), i, j)
+                button = Button(buttonText)
+                button.setMinimumHeight(80)
+                if button.text() not in '1234567890.':
+                    button.setProperty('cssClass', 'specialButton')
+                if button.text() == '0':
+                    self.addWidget(button, i, j - 1, 1, 2)
+                    continue
+                self.addWidget(button, i, j)
