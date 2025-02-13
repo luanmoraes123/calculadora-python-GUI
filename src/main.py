@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QApplication
-from buttons import Button
+from buttons import ButtonsGrid, Button
 from main_window import MainWindow
 from PySide6.QtGui import QIcon
 from variables import WINDOW_ICON_DIR
@@ -13,17 +13,21 @@ if __name__ == '__main__':
     setupTheme(app)
     window = MainWindow()
     window.setWindowTitle('Calculadora')
+    icon = QIcon(str(WINDOW_ICON_DIR))
 
     info = Info('Label principal')
-    window.addToVLayout(info)
+    window.addWidgetToVLayout(info)
 
     display = Display()
-    window.addToVLayout(display)
-    icon = QIcon(str(WINDOW_ICON_DIR))
+    window.addWidgetToVLayout(display)
     window.setWindowIcon(icon)
 
-    button = Button('Texto do botao')
-    window.addToVLayout(button)
+    buttonsGrid = ButtonsGrid()
+    window.vLayout.addLayout(buttonsGrid)
+
+    buttonsGrid.addWidget(Button('0'), 0, 0)
+    buttonsGrid.addWidget(Button('1'), 0, 1)
+    buttonsGrid.addWidget(Button('2'), 0, 2)
 
     window.adjustFixedSize()
     window.show()
