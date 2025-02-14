@@ -85,7 +85,7 @@ class ButtonsGrid(QGridLayout):
             self._connectButtonClicked(
                 button, self._makeSlot(self._operatorClicked, button))
 
-        if text in '=':
+        if text == '=':
             self._connectButtonClicked(
                 button, self._eq)
 
@@ -140,19 +140,15 @@ class ButtonsGrid(QGridLayout):
             else:
                 result = eval(self.equation)
 
+            self.info.setText(f'{self.equation} = {result:.2f}')
+            self._left = result
         except ZeroDivisionError:
-            result = None
+            self._clear()
             self._showError('Divisão pro zero')
 
         except OverflowError:
-            result = None
+            self._clear()
             self._showError('Numero muito grande')
-
-        if result is not None:
-            self.info.setText(f'{self.equation} = {result:.2f}')
-            self._left = result
-        else:
-            self._left = None
 
     def _showError(self, text):
         msgBox = self.window.makeMsgBox()
