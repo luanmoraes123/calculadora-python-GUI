@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from display import Display
+    from main_window import MainWindow
     from info import Info
 
 
@@ -23,10 +24,12 @@ class Button(QPushButton):
 
 
 class ButtonsGrid(QGridLayout):
-    def __init__(self, display: 'Display', info: 'Info',  *args, **kwargs):
+    def __init__(self, display: 'Display', info: 'Info', window: 'MainWindow',
+                 *args, **kwargs):
         super().__init__(*args, *kwargs)
         self.display = display
         self.info = info
+        self.window = window
         self._equation = ''
         self._left = None
         self._right = None
@@ -112,7 +115,7 @@ class ButtonsGrid(QGridLayout):
         displayText = self.display.text()
         self.display.clear()
         if not isValidNumber(displayText) and self._left is None:
-            print('Não tem nada para colocar no valor da esquerda')
+            self._showInfo('Você não digitou nada')
             return
         if self._left is None:
             self._left = float(displayText)
@@ -125,6 +128,7 @@ class ButtonsGrid(QGridLayout):
         result = 0
 
         if not isValidNumber(displayText):
+            self._showInfo('Você não digitou um numero')
             return
 
         self._right = float(displayText)
@@ -138,14 +142,28 @@ class ButtonsGrid(QGridLayout):
 
         except ZeroDivisionError:
             result = None
-            self.info.setText('error')
+            self._showError('Divisão pro zero')
 
         except OverflowError:
             result = None
-            self.info.setText('error')
+            self._showError('Numero muito grande')
 
         if result is not None:
             self.info.setText(f'{self.equation} = {result:.2f}')
             self._left = result
         else:
             self._left = None
+
+    def _showError(self, text):
+        msgBox = self.window.makeMsgBox()
+        msgBox.setText(text)
+        msgBox.setWindowTitle('Error')
+        msgBox.setIcon(msgBox.Icon.Warning)
+        msgBox.exec()
+
+    def _showInfo(self, text):
+        msgBox = self.window.makeMsgBox()
+        msgBox.setText(text)
+        msgBox.setWindowTitle('Information')
+        msgBox.setIcon(msgBox.Icon.Information)
+        msgBox.exec()
