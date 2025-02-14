@@ -15,3 +15,7 @@ def isValidNumber(string: str):
     except ValueError:
         valid = False
     return valid
+
+
+def isEmpity(text):
+    return len(text) == 0
