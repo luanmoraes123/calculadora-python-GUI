@@ -15,7 +15,7 @@ if __name__ == '__main__':
     window.setWindowTitle('Calculadora')
     icon = QIcon(str(WINDOW_ICON_DIR))
 
-    info = Info('Label principal')
+    info = Info('')
     window.addWidgetToVLayout(info)
 
     display = Display()

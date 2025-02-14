@@ -27,6 +27,9 @@ class ButtonsGrid(QGridLayout):
         self.display = display
         self.info = info
         self._equation = ''
+        self._left = None
+        self._right = None
+        self._op = None
         self._gridMask = [
             ['C', '◀', '^', '/'],
             ['7', '8', '9', '*'],
@@ -71,6 +74,14 @@ class ButtonsGrid(QGridLayout):
         if text == 'C':
             self._connectButtonClicked(button, self._clear)
 
+        if text in '+-/*':
+            self._connectButtonClicked(
+                button, self._makeSlot(self._operatorClicked, button))
+
+        if text in '=':
+            self._connectButtonClicked(
+                button, self._eq)
+
     def _makeSlot(self, func, *args, **kwargs):
         @Slot(bool)
         def realSlot(_):
@@ -87,3 +98,36 @@ class ButtonsGrid(QGridLayout):
 
     def _clear(self):
         self.display.clear()
+        self.equation = ''
+        self._left = None
+        self._right = None
+        self._op = None
+
+    def _operatorClicked(self, button):
+        text = button.text()
+        displayText = self.display.text()
+        self.display.clear()
+        if not isValidNumber(displayText) and self._left is None:
+            print('Não tem nada para colocar no valor da esquerda')
+            return
+        if self._left is None:
+            self._left = float(displayText)
+
+        self._op = text
+        self.equation = f'{self._left} {self._op} '
+
+    def _eq(self):
+        displayText = self.display.text()
+
+        if not isValidNumber(displayText):
+            return
+
+        self._right = float(displayText)
+        self.equation = f'{self._left} {self._op} {self._right}'
+        self.display.clear()
+        try:
+            result = eval(self.equation)
+        except ZeroDivisionError:
+            result = ''
+        self.info.setText(f'{self.equation} = {result}')
+        self._left = result
