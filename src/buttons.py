@@ -56,14 +56,15 @@ class ButtonsGrid(QGridLayout):
         self.display.eqPressed.connect(self._eq)
         self.display.delPressed.connect(self.display.backspace)
         self.display.clearPressed.connect(self._clear)
-        self.display.operatorPressed.connect(self._clear)
+        self.display.inputPressed.connect(self._insertToDisplay)
+        self.display.operatorPressed.connect(self._configOperator)
         for i, row in enumerate(self._gridMask):
             for j, buttonText in enumerate(row):
                 button = Button(buttonText)
                 button.setMinimumHeight(80)
                 slot = self._makeSlot(
-                    self._insertButtonTextToDisplay,
-                    button)
+                    self._insertToDisplay,
+                    button.text())
                 self._connectButtonClicked(button, slot)
                 if not isNumOrDot(button.text()):
                     button.setProperty('cssClass', 'specialButton')
@@ -87,7 +88,7 @@ class ButtonsGrid(QGridLayout):
 
         if text in '+-/*^':
             self._connectButtonClicked(
-                button, self._makeSlot(self._operatorClicked, button))
+                button, self._makeSlot(self._configOperator, text))
 
         if text == '=':
             self._connectButtonClicked(
@@ -99,13 +100,12 @@ class ButtonsGrid(QGridLayout):
             func(*args, **kwargs)
         return realSlot
 
-    def _insertButtonTextToDisplay(self, button: Button):
-        buttonText = button.text()
-        newDisplayText = self.display.text() + buttonText
+    def _insertToDisplay(self, text: str):
+        newDisplayText = self.display.text() + text
 
         if not isValidNumber(newDisplayText):
             return
-        self.display.insert(button.text())
+        self.display.insert(text)
 
     def _clear(self):
         self.display.clear()
@@ -114,8 +114,7 @@ class ButtonsGrid(QGridLayout):
         self._right = None
         self._op = None
 
-    def _operatorClicked(self, button):
-        text = button.text()
+    def _configOperator(self, text):
         displayText = self.display.text()
         self.display.clear()
         if not isValidNumber(displayText) and self._left is None:
