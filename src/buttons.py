@@ -130,7 +130,7 @@ class ButtonsGrid(QGridLayout):
         displayText = self.display.text()
         result = 0
 
-        if not isValidNumber(displayText):
+        if not isValidNumber(displayText) or self._left is None:
             self._showInfo('Você não digitou um numero')
             return
 
