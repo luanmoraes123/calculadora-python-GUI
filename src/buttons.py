@@ -75,6 +75,9 @@ class ButtonsGrid(QGridLayout):
         if text == 'C':
             self._connectButtonClicked(button, self._clear)
 
+        if text == '◀':
+            self._connectButtonClicked(button, self.display.backspace)
+
         if text in '+-/*^':
             self._connectButtonClicked(
                 button, self._makeSlot(self._operatorClicked, button))
@@ -134,13 +137,15 @@ class ButtonsGrid(QGridLayout):
                 result = eval(self.equation)
 
         except ZeroDivisionError:
-            result = 'error'
-        except OverflowError:
-            result = 'error'
-
-        if result == 'error':
-            self._left = None
+            result = None
             self.info.setText('error')
-        else:
+
+        except OverflowError:
+            result = None
+            self.info.setText('error')
+
+        if result is not None:
             self.info.setText(f'{self.equation} = {result:.2f}')
             self._left = result
+        else:
+            self._left = None
