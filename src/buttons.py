@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QPushButton, QGridLayout
 from PySide6.QtCore import Slot
+import math
 
 from variables import MEDIUM_FONT_SIZE
 from utils import isNumOrDot, isValidNumber
@@ -74,7 +75,7 @@ class ButtonsGrid(QGridLayout):
         if text == 'C':
             self._connectButtonClicked(button, self._clear)
 
-        if text in '+-/*':
+        if text in '+-/*^':
             self._connectButtonClicked(
                 button, self._makeSlot(self._operatorClicked, button))
 
@@ -118,16 +119,28 @@ class ButtonsGrid(QGridLayout):
 
     def _eq(self):
         displayText = self.display.text()
+        result = 0
 
         if not isValidNumber(displayText):
             return
 
         self._right = float(displayText)
-        self.equation = f'{self._left} {self._op} {self._right}'
+        self.equation = f'{self._left:.2f} {self._op} {self._right:.2f}'
         self.display.clear()
         try:
-            result = eval(self.equation)
+            if '^' in self.equation and isinstance(self._left, float):
+                result = math.pow(self._left, self._right)
+            else:
+                result = eval(self.equation)
+
         except ZeroDivisionError:
-            result = ''
-        self.info.setText(f'{self.equation} = {result}')
-        self._left = result
+            result = 'error'
+        except OverflowError:
+            result = 'error'
+
+        if result == 'error':
+            self._left = None
+            self.info.setText('error')
+        else:
+            self.info.setText(f'{self.equation} = {result:.2f}')
+            self._left = result
